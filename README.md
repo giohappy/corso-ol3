@@ -1,0 +1,1 @@
+Documentazione di supporto al corso sull'utilizzo della libreria [OpenLayers 3](http://openlayers.org/) per la fruizione di dati e servizi geografici su browser

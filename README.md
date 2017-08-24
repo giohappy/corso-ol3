@@ -1,1 +1,1 @@
-Documentazione di supporto al corso sull'utilizzo della libreria [OpenLayers 3](http://openlayers.org/){:target="_blank"} per la fruizione di dati e servizi geografici su browser.
+Documentazione di supporto al corso sull'utilizzo della libreria <a href="http://openlayers.org/" target="_blank">OpenLayers 3</a> per la fruizione di dati e servizi geografici su browser.

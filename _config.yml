@@ -20,9 +20,9 @@ defaults:
       image: true
 
 header_pages:
- - giorno_1.html
- - giorno_2.html
- - giorno_3.html
+ - intro.html
+ - view.html
+ - edit.html
 
 collections:
   lessons:

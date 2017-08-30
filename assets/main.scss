@@ -3,6 +3,12 @@
 
 @import "{{ site.theme }}";
 
+body {
+  @include media-query($on-palm) {
+    padding: 0px 10px 0px 10px;
+  }
+}
+
 .site-header {
   border-top: none;
 }

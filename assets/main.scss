@@ -4,7 +4,11 @@
 @import "{{ site.theme }}";
 
 .site-header {
-    border-top: none;
+  border-top: none;
+}
+
+.site-nav {
+  z-index: 1000;
 }
 
 h1 {

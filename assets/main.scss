@@ -72,13 +72,25 @@ p {
     @extend .center
 }
 
+.attribution {
+    font-size: 0.7em;
+    @extend .center;
+    margin-top: 5px
+}
+
 .lessons-list {
     @extend .post-list;
     li {
-        border: 1px solid #e8e8e8;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
+        border-left: 2px solid #d8d8d8;
+        padding-left: 10px;
+        margin-bottom: 20px;
+        line-height: 26px;
+        > a:hover {
+            text-decoration: none;
+        }
+        &:hover {
+            border-color: $text-color;
+        }
     }
 }
 

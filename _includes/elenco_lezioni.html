@@ -1,5 +1,4 @@
-{% assign docs = site.collections.lessons.docs  %}
-{% assign lessons_docs = docs | sort "n" | where: "day == page.day"%}
+{% assign lessons_docs = site.collections.lessons.docs | where: "day == page.day" | sort "n" %}
 <ul class="lessons-list">
 {% for doc in lessons_docs%}
   <li>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Corso OL - WFS-T</title>
-    <meta name="description" content="Corso OL">
+    <meta name="description" content="Corso OL3">
     <meta name="author" content="Giovanni Allegri">
     <link rel="stylesheet" href="assets/css/ol.css">
     <style>
@@ -51,23 +51,7 @@
         map.addLayer(poligoni);
         
         
-        // Inizializzazione
-        function startEditing(){
-            modifyInteraction = new ol.interaction.Modify({
-                source: poligoni.getSource()
-            });
-            map.addInteraction(modifyInteraction);
-        };
-        
-        var initialized = false;
-        poligoniSource.on('change', function(){
-            if (!initialized && poligoniSource.getState() == 'ready'){
-                startEditing();
-                initialized = true;
-            }
-        });
-      
-        
+       
         // WFS-T
         var options = {
 			srsName: "EPSG:3857", 
@@ -78,38 +62,27 @@
 		var xs = new XMLSerializer();
 		var formatWFS = new ol.format.WFS();
 
-		var createTransactionMessage = function (action, features) {
-			var message;
-			switch (action) {
-				case 'insert':
-					message = formatWFS.writeTransaction(features, null, null, options);
-					break;
-				case 'update':
-					message = formatWFS.writeTransaction(null, features, null, options);
-					break;
-				case 'delete':
-					message = formatWFS.writeTransaction(null, null, features, options);
-					break;
-			}
-
-			var payload = xs.serializeToString(message);
-			$.ajax('http://localhost/cgi-bin/qgis_mapserv.fcgi?map=/home/admin/Scrivania/qgis/wfst.qgs', {
-				service: 'WFS',
-				type: 'POST',
-				dataType: 'xml',
-				processData: false,
-				contentType: 'text/xml',
-				data: payload
-			}).done(function(response) {
-				console.log(formatWFS.readTransactionResponse(response));
-			});
-		}; 
-		
-	
-		$("#save").click(function(){
-			var modFeatures = poligoniSource.getFeatures();
-			createTransactionMessage('update', modFeatures);
-		});
+		var areaExtentInteraction = new ol.interaction.DragBox();
+        
+        areaExtentInteraction.on('boxend',function(evt){
+            var extent = evt.target.getGeometry().getExtent();
+            console.log(extent);
+            var getFeatureRequest = formatWFS.writeGetFeature({
+                featureTypes: ['aree_amministrative'],
+                bbox: extent,	
+                geometryName: "geometry",
+                srsName: "EPSG:3857"
+            });
+            $.post("http://localhost/cgi-bin/qgis_mapserv.fcgi?map=/home/admin/Scrivania/qgis/wfst.qgs&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature"
+            ,xs.serializeToString(getFeatureRequest)
+            ,function(response){
+                //console.log(response);
+                var features = formatWFS.readFeatures(response);
+                console.log(features.length);
+            });
+        });
+        
+        map.addInteraction(areaExtentInteraction);
     </script>
   </body>
 </html>

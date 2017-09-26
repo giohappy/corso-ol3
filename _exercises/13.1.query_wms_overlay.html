@@ -12,7 +12,14 @@
         }
         .results {
             font-size: 14px;
-            margin-top: 10px;
+            background-color: white;
+            overflow: auto;
+            padding: 10px;
+            max-height: 400px;
+            max-width: 400px;
+            white-space: nowrap;
+            box-shadow: 7px 7px 7px #222222;       
+            border: 1px solid lightgrey;
         }
         .results td {
             font-size: 12px;
@@ -133,7 +140,19 @@
         // ------ FINE SEZIONE LAYER TEMATICI ------ //
         
         // ------ SEZIONE INTERROGAZIONE LAYER CATASTO ------ //    
+        var popup = new ol.Overlay({
+            element: document.getElementById('results'),
+            autoPan: true,
+            autoPanAnimation: {
+              duration: 250
+            },
+            offset: [10,0]
+        });
+        map.addOverlay(popup);
+        
         map.on('click', function(evt) {
+            // ad ogni click sulla mappa nascondo l'overlay, nel caso fosse già visibile
+            popup.setPosition(undefined);
             // al click sulla mappa interrogo il layer
             queryLayer(evt.coordinate);
         });
@@ -163,7 +182,7 @@
                 var features = format.readFeatures(gml);
                 // se effettivamente ho ottenuto delle feature allora mostro i risultati
                 if (features.length) {
-                    showResults(features[0]);
+                    showResults(features[0], coordinate);
                 }
             })
         };
@@ -176,7 +195,10 @@
                     source: new ol.source.Vector()
                 })
                 map.addLayer(resultsLayer);
-            }
+            };
+            
+            // use the BBOX for the feature geometry
+            //feature.setGeometry(ol.geom.Polygon.fromExtent(feature.getGeometry().getExtent()));
             
             // prendo il riferimento alla sorgente del layer dei risultati, la pulisco dei precedenti e aggiungo i nuovi elementi
             var resultsSource = resultsLayer.getSource();
@@ -186,6 +208,7 @@
             // visualizzo gli attributi dentro l'elemento "#results"
             var resultsEl = $("#results");
             resultsEl.empty();
+            
             var attributes = feature.getProperties();
             
             var tableEl = $("<table>");
@@ -200,6 +223,11 @@
                 tableEl.append(trEl);
             }
             resultsEl.append(tableEl);
+            
+            // posiziono il popup al vertice superiore destro del BBOX della geometria
+            var geomExtent = feature.getGeometry().getExtent();
+            var popupPosition = ol.extent.getTopRight(geomExtent);
+            popup.setPosition(popupPosition);
         }
         // ------ FINE SEZIONE INTERROGAZIONE LAYER CATASTO ------ //    
     </script>

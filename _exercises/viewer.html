@@ -49,6 +49,7 @@
 	<script src="assets/js/proj4.js"></script>
 	<script src="http://epsg.io/3003.js"></script>
     <script src="assets/js/ol-debug.js"></script>
+    <script src="assets/js/turf.min.js"></script>
 	<script src="assets/js/utils.js"></script>
     <script>
 		var PROXY = "proxy.php?mode=native&url=";
@@ -143,6 +144,7 @@
         
         ///////// LAYER VETTORIALE /////////
 		
+        var geojsonFormat = new ol.format.GeoJSON();
 		var style = function(feature, resolution){
 			var color = null;
 			switch(feature.get('COD_PRO')){
@@ -187,9 +189,10 @@
 			if (resolution > 500) {
 				// estensione della geometria
 				var extent = feature.getGeometry().getExtent();
-				// coordinata del centro dell'estensione
-				var center = ol.extent.getCenter(extent);
-				var geometry = new ol.geom.Point(center);
+				// ottengo un punto di riferimento interno al poligono utilizzando la libreria TURF.js
+                var jsonFeature = geojsonFormat.writeFeatureObject(feature);
+                var jsonPointOnSurfaceFeature = turf.pointOnSurface(jsonFeature);
+                var geometry = geojsonFormat.readFeature(jsonPointOnSurfaceFeature).getGeometry();
 				
 				style = new ol.style.Style({
 					image: new ol.style.Circle({

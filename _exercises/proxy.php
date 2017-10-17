@@ -143,6 +143,7 @@ $valid_url_regex = '/.*/';
 // ############################################################################
 
 $url = $_GET['url'];
+$proxy = $_GET['proxy'];
 
 if ( !$url ) {
   
@@ -158,6 +159,10 @@ if ( !$url ) {
   
 } else {
   $ch = curl_init( $url );
+  
+  if ($proxy) {
+	curl_setopt( $ch, CURLOPT_PROXY, $proxy );
+  }
   
   if ( strtolower($_SERVER['REQUEST_METHOD']) == 'post' ) {
     curl_setopt( $ch, CURLOPT_POST, true );
